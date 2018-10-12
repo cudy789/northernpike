@@ -1,8 +1,10 @@
 import csv
 class roverState:
 
-	# def __init__(self):
-		# self.writer = csv.writer(testfile1.csv, dialect='excel')
+	def __init__(self):
+		with open('testfile1.csv', 'w', newline='\n') as csvfile:
+			self.writer = csv.writer(csvfile, delimiter = ',')
+			self.writer.writerows(['newbar'])
 
 	def getRoverGyro(self):
 		return "Gyro values x: %d y: %d z: %d" % (self.x, self.y, self.z)
@@ -14,9 +16,8 @@ class roverState:
 	def readGyroData(self):
 		return None
 
+	# def writedata(self):
 
-	def writedata(self):
-		self.writer.writerows(x,y,z,d)
 
 	x=10
 	y=15
