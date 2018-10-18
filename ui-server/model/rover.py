@@ -1,10 +1,14 @@
 import csv
+import threading
+import time
 class roverState:
 
 	def __init__(self):
-		with open('testfile1.csv', 'w', newline='\n') as csvfile:
-			self.writer = csv.writer(csvfile, delimiter = ',')
-			self.writer.writerows(['newbar'])
+		with open('testfile1.csv', mode='w', newline='\n') as csvfile:
+			fieldnames = ['gyroX', 'gyroY', 'gyroZ']
+			self.writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+			self.writer.writeheader()
+			self.writer.writerow({'gyroX': self.x, 'gyroY': self.y, 'gyroZ': self.z})
 
 	def getRoverGyro(self):
 		return "Gyro values x: %d y: %d z: %d" % (self.x, self.y, self.z)
