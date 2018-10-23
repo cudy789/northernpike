@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input, ViewChild, HostListener} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, ViewChild, HostListener} from '@angular/core';
 import * as THREE from 'three';
 import './js/EnableThreeExamples';
 import 'three/examples/js/controls/OrbitControls';
@@ -12,7 +12,6 @@ import 'three/examples/js/loaders/PCDLoader';
 export class ThreejsComponent implements AfterViewInit {
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
-  private cameraTarget: THREE.Vector3;
   public scene: THREE.Scene;
 
   public fieldOfView = 60;
@@ -52,7 +51,7 @@ export class ThreejsComponent implements AfterViewInit {
     light.position.set(0, 0, 100);
     this.scene.add(light);
 
-    const light = new THREE.PointLight(0xffffff, 1, 1000);
+    light = new THREE.PointLight(0xffffff, 1, 1000);
     light.position.set(0, 0, -100);
     this.scene.add(light);
   }
@@ -137,18 +136,18 @@ export class ThreejsComponent implements AfterViewInit {
 
   }
 
-  private findAllObjects(pred: THREE.Object3D[], parent: THREE.Object3D) {
-    // NOTE: Better to keep separate array of selected objects
-    if (parent.children.length > 0) {
-      parent.children.forEach((i) => {
-        pred.push(i);
-        this.findAllObjects(pred, i);
-      });
-    }
-  }
+  // private findAllObjects(pred: THREE.Object3D[], parent: THREE.Object3D) {
+  //   //   // NOTE: Better to keep separate array of selected objects
+  //   //   if (parent.children.length > 0) {
+  //   //     parent.children.forEach((i) => {
+  //   //       pred.push(i);
+  //   //       this.findAllObjects(pred, i);
+  //   //     });
+  //   //   }
+  //   // }
 
   public onMouseUp(event: MouseEvent) {
-    // console.log('onMouseUp');
+    console.log('onMouseUp');
   }
 
 
