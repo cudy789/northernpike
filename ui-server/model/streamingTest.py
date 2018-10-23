@@ -15,9 +15,6 @@ myCompass = niceSensor(1)
 myBarometer = niceSensor(1)
 nPike = rover(myGyro, myCompass, myBarometer)
 
-# def Gyroscope():
-# 	returnString = "Data 1: %d %d %d" % (random.randint(1,21)*5, random.randint(1,21)*5, random.randint(1,21)*5)
-# 	return returnString
 
 def nPikeStringData():
 	returnString = "%s, %s, %s" % (nPike.getRoverGyro(), nPike.getRoverCompass(), nPike.getRoverBarometer())
@@ -34,4 +31,4 @@ def index():
 	return redirect(url_for('static', filename='index.html'))
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=80)
+    app.run(host='0.0.0.0', port=80)
