@@ -4,22 +4,23 @@ import time
 import random
 import importlib
 # import rover
-from rover import roverState
-from randomSensor import randomSensor
+from rover import rover
+from niceSensor import niceSensor
 from flask import Flask, Response, redirect, request, url_for
 
 app = Flask(__name__)
 
-myGyro = randomSensor(3)
-myCompass = randomSensor(1)
-rover1 = roverState(myGyro, myCompass)
+myGyro = niceSensor(3)
+myCompass = niceSensor(1)
+myBarometer = niceSensor(1)
+nPike = rover(myGyro, myCompass, myBarometer)
 
-def Gyroscope():
-	returnString = "Data 1: %d %d %d" % (random.randint(1,21)*5, random.randint(1,21)*5, random.randint(1,21)*5)
-	return returnString
+# def Gyroscope():
+# 	returnString = "Data 1: %d %d %d" % (random.randint(1,21)*5, random.randint(1,21)*5, random.randint(1,21)*5)
+# 	return returnString
 
-def roverLocation():
-	returnString = "%s, %s" % (rover1.getRoverGyro(), rover1.getRoverCompass())
+def nPikeStringData():
+	returnString = "%s, %s, %s" % (nPike.getRoverGyro(), nPike.getRoverCompass(), nPike.getRoverBarometer())
 	return returnString
 
 @app.route('/')
@@ -27,8 +28,7 @@ def index():
 	if request.headers.get('accept') == 'text/event-stream':
 		def events():
 			for i, c in enumerate(itertools.cycle('\|/-')):
-				rover1.run()
-				yield "data: %s %s\n\n" % (c, roverLocation())
+				yield "data: %s %s\n\n" % (c, nPikeStringData())
 				time.sleep(.1)  # an artificial delay
 		return Response(events(), content_type='text/event-stream')
 	return redirect(url_for('static', filename='index.html'))
