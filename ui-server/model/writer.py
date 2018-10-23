@@ -20,7 +20,7 @@ class writerThread(threading.Thread):
             self.writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
             self.writer.writeheader()
     def run(self):
-        while self.counter < 10000:
+        while True:
             with open(self.filename, mode='a', newline='\n') as self.csvfile:
                 self.writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
 
