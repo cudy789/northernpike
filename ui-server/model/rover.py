@@ -1,7 +1,5 @@
-import csv
 import threading
 import time
-import random
 from writer import writerThread
 class rover:
 
@@ -31,6 +29,7 @@ class rover:
 		while True:
 			self.gyroDataTuple = self.inputGyro.getValue()
 			self.compassDataTuple = self.inputCompass.getValue()
+			self.barometerDataTuple = self.inputBarometer.getValue()
 			time.sleep(.2)
 
 
