@@ -5,13 +5,14 @@ import random
 import importlib
 # import rover
 from rover import roverState
-from fakeGyro import fakeGyro
+from randomSensor import randomSensor
 from flask import Flask, Response, redirect, request, url_for
 
 app = Flask(__name__)
 
-myGyro = fakeGyro()
-rover1 = roverState(fakeGyro)
+myGyro = randomSensor(3)
+myCompass = randomSensor(1)
+rover1 = roverState(myGyro, myCompass)
 
 def Gyroscope():
 	returnString = "Data 1: %d %d %d" % (random.randint(1,21)*5, random.randint(1,21)*5, random.randint(1,21)*5)
