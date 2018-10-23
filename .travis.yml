@@ -1,0 +1,40 @@
+language: generic
+matrix:
+  include:
+#  - language: python
+#    name: "ui-server"
+#    python: 3.6
+#    sudo: true
+#    cache: pip
+#    before_install:
+#    - sudo add-apt-repository -y ppa:mc3man/trusty-media
+#    - sudo apt update
+#    - sudo apt install ffmpeg libavformat54 libopus0 libvpx1
+#    - cd ui-server
+#    install:
+#    - pip install -r requirements.txt
+
+  - language: node_js
+    name: "client-ui"
+    node_js:
+    - node
+    branches:
+      except:
+      - gh-pages
+    cache:
+      directories:
+      - /ui/node_modules
+    before_install:
+    - cd ui
+    install:
+    - npm install @angular/cli
+    - npm install
+    script:
+    - ng build --prod --base-href=/northernpike/
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      github_token: $GITHUB_TOKEN
+      on:
+        branch: master
+      local_dir: ui/dist/controlpanel
