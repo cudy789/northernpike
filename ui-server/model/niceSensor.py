@@ -1,7 +1,7 @@
 import random
 class niceSensor:
-    def __init__(self, numberOfOutputs, inputSensor=None):
-        self.inputSensor = inputSensor
+    def __init__(self, numberOfOutputs, sensorAddress=None):
+        self.sensorAddress = sensorAddress
         self.numberOfOutputs = numberOfOutputs
     def getValue(self):
         self.thisList = []
