@@ -1,6 +1,6 @@
 import threading
 import time
-from writer import writerThread
+from writerThread import writerThread
 
 
 class rover:
@@ -9,29 +9,33 @@ class rover:
         self.inputGyro = inputGyro
         self.inputCompass = inputCompass
         self.inputBarometer = inputBarometer
-        self.gyroDataTuple = self.inputGyro.getValue()
-        self.compassDataTuple = self.inputCompass.getValue()
-        self.barometerDataTuple = self.inputBarometer.getValue()
 
-        threadGyro = writerThread(1, ["gyroX", "gyroY", "gyroZ", "compass", "barometer"], 'testfile1.csv',
-                                  self.inputGyro, self.inputCompass, self.inputBarometer)
+        self.gyroDataList = self.inputGyro.getValue()
+        self.compassDataList = self.inputCompass.getValue()
+        self.barometerDataList = self.inputBarometer.getValue()
+
+        threadGyro = writerThread(1, ["gyroX", "gyroY", "gyroZ"], 'gyroData.csv', self.inputGyro) # Create & start data logging threads
+        threadCompass = writerThread(2, ["heading"], 'compassData.csv', self.inputCompass)
+        threadBarometer = writerThread(3, ["pressure"], 'barometerData.csv', self.inputBarometer)
         threadGyro.start()
+        threadCompass.start()
+        threadBarometer.start()
 
         updateData = threading.Thread(target=self.__run)
         updateData.start()
 
     def getRoverGyro(self):
-        return "Gyro values x: %d y: %d z: %d" % (self.gyroDataTuple[0], self.gyroDataTuple[1], self.gyroDataTuple[2])
+        return "Gyro values x: %d y: %d z: %d" % (self.gyroDataList[0], self.gyroDataList[1], self.gyroDataList[2])
 
     def getRoverCompass(self):
-        return "Direction: %d" % (self.compassDataTuple[0])
+        return "Direction: %d" % (self.compassDataList[0])
 
     def getRoverBarometer(self):
-        return "Pressure: %d" % (self.barometerDataTuple[0])
+        return "Pressure: %d" % (self.barometerDataList[0])
 
     def __run(self):
         while True:
-            self.gyroDataTuple = self.inputGyro.getValue()
-            self.compassDataTuple = self.inputCompass.getValue()
-            self.barometerDataTuple = self.inputBarometer.getValue()
+            self.gyroDataList = self.inputGyro.getValue()
+            self.compassDataList = self.inputCompass.getValue()
+            self.barometerDataList = self.inputBarometer.getValue()
             time.sleep(.2)
