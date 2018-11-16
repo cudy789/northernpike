@@ -1,4 +1,4 @@
-from writerThread import writerThread
+from writer import writer
 from niceBattery import niceBattery
 from niceBarometer import niceBarometer
 from niceLeak import niceLeak
@@ -21,9 +21,21 @@ class sensorHelper:
         self.myBarometer = niceBarometer(BAROMETER_ADDRESS)
         self.myLeak = niceLeak(LEAK_ADDRESS)
         self.myHygrometer = niceHygrometer(HYGROMETER_ADDRESS)
-        self.myBoard = niceBoard(BOARD_ADDRESSES) # Starts its own writerThreads
+        self.myBoard = niceBoard(BOARD_ADDRESSES)
+        self.fileHeader = ["Voltage", "Current", "Pressure", "Water?", "Percent Humidity", "Temperature", "GravityX", "GravityY",
+                           "GravityZ", "MagX", "MagY", "MagZ", "AccelX", "AccelY", "AccelX", "VelX", "VelY", "VelZ", "OrientX",
+                           "OrientY", "OrientZ"]
+        self.sensorList = [self.myBattery, self.myBarometer, self.myLeak, self.myHygrometer, self.myBoard]
+        self.writer = writer(1, self.fileHeader, 'allSensors.csv', self.sensorList)
+        self.writer.start()
 
-        self.batteryThread = writerThread(0, ["Voltage", "Current"], 'batteryData.csv', self.myBattery)
-        self.barometerThread = writerThread(1, ["Pressure"], 'barometerData.csv', self.myBarometer)
-        self.LeakThread = writerThread(2, ["isWater"], 'leakData.csv', self.myLeak)
-        self.HygrometerThread = writerThread(3, ["Humidity Percent"], 'hygrometerData.csv', self.myHygrometer)
+    def getBattery(self):
+        return self.myBattery
+    def getBarometer(self):
+        return self.myBarometer
+    def getLeak(self):
+        return self.myLeak
+    def getHygrometer(self):
+        return self.myHygrometer
+    def getBoard(self):
+        return self.myBoard

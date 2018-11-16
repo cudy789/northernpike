@@ -1,25 +1,13 @@
 import threading
 import time
-from writerThread import writerThread
-
+from writer import writer
+from sensorHelper import sensorHelper
 
 class rover:
 
     def __init__(self, inputGyro, inputCompass, inputBarometer):
-        self.inputGyro = inputGyro
-        self.inputCompass = inputCompass
-        self.inputBarometer = inputBarometer
+        self.mySensorHelper = sensorHelper()
 
-        self.gyroDataList = self.inputGyro.getValue()
-        self.compassDataList = self.inputCompass.getValue()
-        self.barometerDataList = self.inputBarometer.getValue()
-
-        threadGyro = writerThread(1, ["gyroX", "gyroY", "gyroZ"], 'gyroData.csv', self.inputGyro) # Create & start data logging threads
-        threadCompass = writerThread(2, ["heading"], 'compassData.csv', self.inputCompass)
-        threadBarometer = writerThread(3, ["pressure"], 'barometerData.csv', self.inputBarometer)
-        threadGyro.start()
-        threadCompass.start()
-        threadBarometer.start()
 
         updateData = threading.Thread(target=self.__run)
         updateData.start()
@@ -35,7 +23,7 @@ class rover:
 
     def __run(self):
         while True:
-            self.gyroDataList = self.inputGyro.getValue()
-            self.compassDataList = self.inputCompass.getValue()
-            self.barometerDataList = self.inputBarometer.getValue()
+            self.gyroDataList = self.mySensorHelper.getBoard().getAbsoluteOrientation()
+            self.compassDataList = self.mySensorHelper.getBoard().getMagneticVector()
+            self.barometerDataList = self.mySensorHelper.getBarometer().getPressure()
             time.sleep(.2)
