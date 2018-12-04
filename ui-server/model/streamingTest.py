@@ -9,14 +9,14 @@ from flask import Flask, Response, redirect, request, url_for
 
 app = Flask(__name__)
 
-myGyro = niceSensor(3)
-myCompass = niceSensor(1)
-myBarometer = niceSensor(1)
-nPike = rover(myGyro, myCompass, myBarometer)
+# myGyro = niceSensor(3)
+# myCompass = niceSensor(1)
+# myBarometer = niceSensor(1)
+nPike = rover()
 
 
 def nPikeStringData():
-    returnString = "%s, %s, %s" % (nPike.getRoverGyro(), nPike.getRoverCompass(), nPike.getRoverBarometer())
+    returnString = "%s, %s, %s" % (nPike.getRoverGyro(), nPike.getRoverMagnometer(), nPike.getRoverBarometer())
     return returnString
 
 

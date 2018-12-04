@@ -1,9 +1,9 @@
 import random
 
 class niceBoard:
-    def __init__(self, addresses):
+    def __init__(self, addresses, inMessage, sObj):
         self.addresses = addresses
-
+        self.sObj = sObj
 
     def getTemp(self):
         return random.randint(1,100)
@@ -24,3 +24,5 @@ class niceBoard:
                 random.randint(1,100), random.randint(1,100), random.randint(1,100),
                 random.randint(1,100), random.randint(1,100), random.randint(1,100), # All 16
                 random.randint(1,100)]
+    def isAlive(self):
+        return True
