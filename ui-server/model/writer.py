@@ -22,10 +22,11 @@ class writer(threading.Thread):
             self.writer.writeheader()
     def run(self):
         while True:
+
             with open(self.filename, mode='a', newline='\n') as self.csvfile:
                 self.writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
                 self.__updateList()
-                
+
                 # for i in range(len(self.fieldnames)):
                 #     self.writer.writerow({self.fieldnames[i]: self.dataList[i]})
 
@@ -42,10 +43,11 @@ class writer(threading.Thread):
                                       self.fieldnames[20]: self.dataList[20]
 
                                       })
-                    
+
                 # print(self.threadID, self.counter)
                 # self.counter+=1
                 time.sleep(self.THREAD_SLEEP_TIME)
+
     def __updateList(self):
         self.dataList.clear()
 

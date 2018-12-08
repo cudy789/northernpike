@@ -7,4 +7,4 @@ class niceBarometer(niceSensor):
         niceSensor. __init__(self, 1, address, inMessage)
 
     def getPressure(self):
-        return niceSensor.getValue(self)
+        return niceSensor.getValue(self)[0]

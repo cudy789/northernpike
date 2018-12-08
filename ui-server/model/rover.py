@@ -8,7 +8,6 @@ class rover:
     def __init__(self):
         self.mySensorHelper = sensorHelper()
 
-
     def sensorsOnline(self):
         return self.mySensorHelper.sensorsOnline()
 

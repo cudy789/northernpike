@@ -8,10 +8,10 @@ from niceBoard import niceBoard
 
 # -- Instruction Addresses -- #
 BATTERY_ADDRESS = 1
-BAROMETER_ADDRESS = 2
-LEAK_ADDRESS = 3
-HYGROMETER_ADDRESS = 4
-BOARD_ADDRESSES = [5,6,7,8] # (magnometer, accelerometer, gyroscope, thermometer) addresses
+BAROMETER_ADDRESS = 3 # batteryAddress needs 2 addresses
+LEAK_ADDRESS = 4
+HYGROMETER_ADDRESS = 5
+BOARD_ADDRESS = 6 # magnometer, accelerometer, gyroscope, thermometer
 SERIAL_PORT = '/dev/ttyACM0'
 SERIAL_RATE = 9600
 
@@ -19,21 +19,20 @@ class sensorHelper:
 
     def __init__(self):
         self.s = serial.Serial(SERIAL_PORT)
-        self.s.baudrate(SERIAL_RATE)
-        self.s.flushInput()
+        # self.s.baudrate = SERIAL_RATE
 
         self.myBattery = niceBattery(BATTERY_ADDRESS, self.s)
         self.myBarometer = niceBarometer(BAROMETER_ADDRESS, self.s)
         self.myLeak = niceLeak(LEAK_ADDRESS, self.s)
         self.myHygrometer = niceHygrometer(HYGROMETER_ADDRESS, self.s)
-        self.myBoard = niceBoard(BOARD_ADDRESSES, self.s)
+        self.myBoard = niceBoard(BOARD_ADDRESS, self.s)
 
-        self.fileHeader = ["Voltage", "Current", "Pressure", "Water?", "Percent Humidity", "Temperature", "GravityX", "GravityY",
-                           "GravityZ", "MagX", "MagY", "MagZ", "AccelX", "AccelY", "AccelX", "VelX", "VelY", "VelZ", "OrientX",
-                           "OrientY", "OrientZ"]
-        self.sensorList = [self.myBattery, self.myBarometer, self.myLeak, self.myHygrometer, self.myBoard]
-        self.writer = writer(1, self.fileHeader, 'allSensors.csv', self.sensorList)
-        self.writer.start()
+        # self.fileHeader = ["Voltage", "Current", "Pressure", "Water?", "Percent Humidity", "Temperature", "GravityX", "GravityY",
+        #                    "GravityZ", "MagX", "MagY", "MagZ", "AccelX", "AccelY", "AccelX", "VelX", "VelY", "VelZ", "OrientX",
+        #                    "OrientY", "OrientZ"]
+        # self.sensorList = [self.myBattery, self.myBarometer, self.myLeak, self.myHygrometer, self.myBoard]
+        # self.writer = writer(1, self.fileHeader, 'allSensors.csv', self.sensorList)
+        # self.writer.start()
     def readSerial(self):
         self.sString = self.s.readline()
     def getBattery(self):

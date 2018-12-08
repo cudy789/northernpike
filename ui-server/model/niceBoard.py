@@ -1,8 +1,8 @@
 import random
 
 class niceBoard:
-    def __init__(self, addresses, inMessage, sObj):
-        self.addresses = addresses
+    def __init__(self, address, sObj):
+        self.addresses = address
         self.sObj = sObj
 
     def getTemp(self):
