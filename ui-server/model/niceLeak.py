@@ -7,4 +7,4 @@ class niceLeak(niceSensor):
         niceSensor.__init__(self, 1, address, inMessage)
 
     def isWater(self):
-        return str((bool(niceSensor.getValue(self)[0])))
+        return [bool(niceSensor.getValue(self)[0])]

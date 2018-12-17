@@ -11,19 +11,31 @@ class rover:
     def sensorsOnline(self):
         return self.mySensorHelper.sensorsOnline()
 
+    def getRoverVoltage(self):
+        self.voltageData = self.mySensorHelper.getBattery().getVoltage()[0]
+        return self.voltageData
+
+    def getRoverCurrent(self):
+        self.currentData = self.mySensorHelper.getBattery().getCurrent()[0]
+        return self.currentData
+
+    def getRoverLeak(self):
+        self.leakData = self.mySensorHelper.getLeak().isWater()[0]
+        return self.leakData
+
     def getRoverBarometer(self): # barometer
-        self.barometerData = self.mySensorHelper.getBarometer().getPressure()
+        self.barometerData = self.mySensorHelper.getBarometer().getPressure()[0]
         return self.barometerData
 
     def getRoverHygrometer(self): # humidity
-        self.hygrometerData = self.mySensorHelper.getHygrometer().getPercentHum()
+        self.hygrometerData = self.mySensorHelper.getHygrometer().getPercentHum()[0]
         return self.hygrometerData
 
     def getRoverThermometer(self): # temp
-        self.thermometerData = self.mySensorHelper.getBoard().getTemp()
+        self.thermometerData = self.mySensorHelper.getBoard().getTemp()[0]
         return self.thermometerData
 
-    def getRoverGravity(self):
+    def getRoverGravity(self): # 3 values, x y z
         self.gravityDataList = self.mySensorHelper.getBoard().getGravityVector()
         return self.gravityDataList
 

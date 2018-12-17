@@ -6,19 +6,27 @@ class niceSensor(abc.ABC):
         self.sensorAddress = sensorAddress
         self.sObj = sObj
         self.numberOfOutputs = numberOfOutputs
-        self.thisList = []
-        self.lastMessage = "9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9"
+        self.errValues = "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x\n"
 
     def getValue(self):
-        print(self.sObj.readline())
-        cleanMessage = [x.strip() for x in self.sObj.readline().decode("utf-8").split(',')]
-        self.lastMessage = cleanMessage
-        # self.sObj.flushInput()
+        self.thisList = []
+        try:
+            cleanMessage = [y.strip() for y in self.sObj.readline().decode("utf-8").split(',')]
+            if (len(cleanMessage) > 20):
+                self.lastMessage = cleanMessage
+            else:
+                self.lastMessage = "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x\n"
+            # print("read serial")
+        except UnicodeDecodeError:
+            self.lastMessage = "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x\n"
+            print("error reading serial")
+            self.sObj.flushInput()
         # print(self.lastMessage)
         # cleanMessage = [x.strip() for x in self.sObj.split(',')]
-        for x in range(self.sensorAddress-1, self.sensorAddress-1+self.numberOfOutputs):
+        for x in range(self.sensorAddress-1, (self.sensorAddress-1 + self.numberOfOutputs)):
             self.thisList.append(self.lastMessage[x])
-        print(self.lastMessage)
+            # print(self.lastMessage[x])
+        # print(self.lastMessage)
         return self.thisList
     def isAlive(self):
         return True

@@ -33,8 +33,19 @@ def index():
 
 
 if __name__ == "__main__":
-    while True:
-        print(nPike.getRoverBarometer())
-
+    # while True:
+        # print(nPike.getRoverVoltage())
+        # print(nPike.getRoverGyro())
+        # print(nPike.getRoverBarometer())
+        # print(nPike.getRoverHygrometer())
+        # print(nPike.getRoverThermometer())
+        # print(nPike.getRoverGravity())
+        # print(nPike.getRoverLeak())
+        # print(nPike.getRoverMagnometer())
+        # print(nPike.getRoverAccelerometer())
+        # print(nPike.getRoverAccelerometer())
+        # print(nPike.getRoverVelocity())
+        # print(nPike.getRoverGyro())
     app.run(host='0.0.0.0', port=80)
+
 

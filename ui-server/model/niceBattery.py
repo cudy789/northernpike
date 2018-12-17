@@ -7,7 +7,7 @@ class niceBattery(niceSensor):
         niceSensor. __init__(self, 2, address, inMessage)
 
     def getVoltage(self):
-        return niceSensor.getValue(self)[0]
+        return [niceSensor.getValue(self)[0]]
 
     def getCurrent(self):
-        return niceSensor.getValue(self)[1]
+        return [niceSensor.getValue(self)[1]]
