@@ -1,58 +1,74 @@
 import threading
 import time
-from writer import writer
-from sensorHelper import sensorHelper
+from sensorHelper import sensorHelper # Might give linter error, but runs fine
+#   -----Description-----
+# This class contains all the getter
+# methods to observe the current state
+# of the rover. It also contains the setter
+# methods to pass navigation information to
+# the Arduino.
+#   ---------------------
+BATTERY_ADDRESS = 1
+BAROMETER_ADDRESS = 3 # batteryAddress needs 2 addresses
+LEAK_ADDRESS = 4
+HYGROMETER_ADDRESS = 5
+BOARD_ADDRESS = 6 # magnometer, accelerometer, gyroscope, thermometer
 
 class rover:
 
     def __init__(self):
         self.mySensorHelper = sensorHelper()
 
+    ##### GETTERS #####
+
     def sensorsOnline(self):
         return self.mySensorHelper.sensorsOnline()
 
     def getRoverVoltage(self):
-        self.voltageData = self.mySensorHelper.getBattery().getVoltage()[0]
-        return self.voltageData
+        return self.mySensorHelper.getSS()[BATTERY_ADDRESS-1]
 
     def getRoverCurrent(self):
-        self.currentData = self.mySensorHelper.getBattery().getCurrent()[0]
-        return self.currentData
-
-    def getRoverLeak(self):
-        self.leakData = self.mySensorHelper.getLeak().isWater()[0]
-        return self.leakData
+        return self.mySensorHelper.getSS()[BATTERY_ADDRESS-1+1]
 
     def getRoverBarometer(self): # barometer
-        self.barometerData = self.mySensorHelper.getBarometer().getPressure()[0]
-        return self.barometerData
+        return self.mySensorHelper.getSS()[BAROMETER_ADDRESS-1]
+
+    def getRoverLeak(self):
+        return bool(self.mySensorHelper.getSS()[LEAK_ADDRESS-1])
 
     def getRoverHygrometer(self): # humidity
-        self.hygrometerData = self.mySensorHelper.getHygrometer().getPercentHum()[0]
-        return self.hygrometerData
+        return self.mySensorHelper.getSS()[HYGROMETER_ADDRESS-1]
+
 
     def getRoverThermometer(self): # temp
-        self.thermometerData = self.mySensorHelper.getBoard().getTemp()[0]
-        return self.thermometerData
+        return self.mySensorHelper.getSS()[BOARD_ADDRESS-1]
 
     def getRoverGravity(self): # 3 values, x y z
-        self.gravityDataList = self.mySensorHelper.getBoard().getGravityVector()
-        return self.gravityDataList
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS-1+1],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+2],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+3]]
 
     def getRoverMagnometer(self): #compass, 3 values, x y z
-        self.compassDataList = self.mySensorHelper.getBoard().getMagneticVector()
-        return self.compassDataList
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS-1+4],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+5],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+6]]
 
     def getRoverAccelerometer(self): # acceleration x y z
-        self.accelerometerDataList = self.mySensorHelper.getBoard().getAccelerationVector()
-        return self.accelerometerDataList
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 7],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 8],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 9]]
 
     def getRoverVelocity(self): # velocity x y z
-        self.velocityDataList = self.mySensorHelper.getBoard().getAngularVelocity()
-        return self.velocityDataList
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 10],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 11],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 12]]
 
     def getRoverGyro(self): # 3 values, x y z
-        self.gyroDataList = self.mySensorHelper.getBoard().getAbsoluteOrientation()
-        return self.gyroDataList
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS-1+13],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+14],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+15]]
+    ###################
 
+    ##### SETTERS #####
+    ###################
 

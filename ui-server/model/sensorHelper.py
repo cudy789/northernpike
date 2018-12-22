@@ -1,80 +1,64 @@
 import serial
 import time
-from writer import writer
-from niceBattery import niceBattery
-from niceBarometer import niceBarometer
-from niceLeak import niceLeak
-from niceHygrometer import niceHygrometer
-from niceBoard import niceBoard
+from writer import writer # Might give a linter error, but runs fine
 from threading import Thread
-# -- Instruction Addresses -- #
-BATTERY_ADDRESS = 1
-BAROMETER_ADDRESS = 3 # batteryAddress needs 2 addresses
-LEAK_ADDRESS = 4
-HYGROMETER_ADDRESS = 5
-BOARD_ADDRESS = 6 # magnometer, accelerometer, gyroscope, thermometer
-SERIAL_PORT = '/dev/ttyUSB0'
-SERIAL_RATE = 9600
 
+SERIAL_PORT = '/dev/ttyUSB0' # Won't change if the Arduino is always plugged into the same USB port
+SERIAL_RATE = 9600 # Baud rate for the Arduino
+WRITE_INTERVAL = .2 # Log data to Pi every 200 ms
+UPDATE_INTERVAL = .01 # Update our state every 100 ms
+
+#   -----Description-----
+#   This class manages the serial connection to the Arduino,
+#   starts data logging with the Writer class, and has
+#   accessors for status of sensors and sensor values
+#   ---------------------
 class sensorHelper:
 
     def __init__(self):
+        # Setup & start Arduino serial connection
         self.s = serial.Serial(SERIAL_PORT)
-        # self.s.baudrate = SERIAL_RATE
-        self.stringValues = []
+        self.stringValues = [] # List of sensor values 21 digits long
 
-        self.myBattery = niceBattery(BATTERY_ADDRESS, self.s)
-        self.myBarometer = niceBarometer(BAROMETER_ADDRESS, self.s)
-        self.myLeak = niceLeak(LEAK_ADDRESS, self.s)
-        self.myHygrometer = niceHygrometer(HYGROMETER_ADDRESS, self.s)
-        self.myBoard = niceBoard(BOARD_ADDRESS, self.s)
-
+        # Setup & start a thread to update local sensor values
         readProcess = Thread(target=self.__readSerial)
         readProcess.start()
 
-        time.sleep(3)
-        self.fileHeader = ["Voltage", "Current", "Pressure", "Water?", "Percent Humidity", "Temperature", "GravityX", "GravityY",
-                           "GravityZ", "MagX", "MagY", "MagZ", "AccelX", "AccelY", "AccelX", "VelX", "VelY", "VelZ", "OrientX",
-                           "OrientY", "OrientZ"]
-        self.sensorList = [self.myBattery, self.myBarometer, self.myLeak, self.myHygrometer, self.myBoard]
-        self.writer = writer(1, self.fileHeader, 'allSensors.csv', self)
+        time.sleep(3) # Wait for serial connection to initialize
+        # Setup % start a thread to log sensor data to the RPi
+        # File header for local .csv file
+                        #       [0]     [1]         [2]     [3]         [4]             [5]           [6]       [7]         [8]      [9]    [10]   [11]   [12]      [13]    [14]     [15]   [16]  [17]     [18]      [19]      [20]
+        self.fileHeader = ["Voltage","Current","Pressure","Leak","Percent Humidity","Temperature","GravityX","GravityY","GravityZ","MagX","MagY","MagZ","AccelX","AccelY","AccelZ","VelX","VelY","VelZ","OrientX","OrientY","OrientZ"]
+        self.writer = writer(WRITE_INTERVAL, self.fileHeader, 'allSensors.csv', self)
         self.writer.start()
 
-
-
-    def getSerialString(self):
+    # Returns the 21 digit long sensor value list
+    def getSS(self):
         return self.stringValues
-    def getBattery(self):
-        return self.myBattery
-    def getBarometer(self):
-        return self.myBarometer
-    def getLeak(self):
-        return self.myLeak
-    def getHygrometer(self):
-        return self.myHygrometer
-    def getBoard(self):
-        return self.myBoard
+    # If a sensor returns a value of 'x', it isn't functioning properly.
+    # This returns "All sensors are functional" when there are no errors,
+    # otherwise it returns a message containing which sensors aren't functional.
     def sensorsOnline(self):
-        bool = True
-        if (not self.myBattery.isAlive()): bool = False
-        if (not self.myBarometer.isAlive()): bool = False
-        if (not self.myLeak.isAlive()): bool = False
-        if (not self.myHygrometer.isAlive()): bool = False
-        if (not self.myBoard.isAlive()): bool = False
-        return bool
+        errorSensors = []
+        for x in range(0,21):
+            if self.stringValues[x] == "x": errorSensors.append(self.fileHeader[x])
+        if len(errorSensors)==0: return "All sensors functional"
+        else: return "Error: %s are not functional." % errorSensors
+    # This function polls the serial bus every UPDATE_INTERVAL seconds
+    # for new data. The values are stored locally to self.stringValues.
+    # If the string isn't of proper length (i.e. we have malformed data),
+    # the entire string is replaced with "x,x,x,......". 'x' signifies
+    # invalid data.
     def __readSerial(self):
         while True:
             try:
-                cleanMessage = [y.strip() for y in self.s.readline().decode("utf-8").split(',')]
-                if (len(cleanMessage) > 20):
+                cleanMessage = [y.strip() for y in self.s.readline().decode("utf-8").split(',')] # Decodes and formats data into a list of strings
+                if (len(cleanMessage) == 21):
                     self.stringValues = cleanMessage
                 else:
                     self.stringValues = "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x\n"
-                # print("read serial")
-            except UnicodeDecodeError:
+            except UnicodeDecodeError: # Catches errors when decoding data at an invalid start position
                 self.stringValues = "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x\n"
                 print("error reading serial")
-                self.s.flushInput()
-
-
-            print(self.stringValues)
+                self.s.flushInput() # Flushes serial bus (might not be necessary)
+            time.sleep(UPDATE_INTERVAL)
