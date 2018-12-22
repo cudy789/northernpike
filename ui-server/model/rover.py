@@ -67,8 +67,21 @@ class rover:
         return [self.mySensorHelper.getSS()[BOARD_ADDRESS-1+13],
                 self.mySensorHelper.getSS()[BOARD_ADDRESS-1+14],
                 self.mySensorHelper.getSS()[BOARD_ADDRESS-1+15]]
+
+    def getRoverDewpoint(self):
+        return self.getRoverThermometer() - ((100 - self.getRoverHygrometer()/5)) # Approximation in Celsius
+
     ###################
 
     ##### SETTERS #####
+
+    def sendJoystick(self, jValues): # 3 values, x y z
+        self.mySensorHelper.setNav(jValues, 0)
+
+    def sendSlider(self, sValue): # 1 value
+        self.mySensorHelper.setNav(sValue, 3)
+
+    def sendButtons(self, buttons): # 9 values
+        self.mySensorHelper.setNav(buttons,4)
     ###################
 
