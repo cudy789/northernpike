@@ -21,8 +21,8 @@ class sensorHelper:
         self.s = serial.Serial(SERIAL_PORT)
         self.recieveValues = [] # List of sensor values 21 digits long
                 # Order is joyX, joyY, joyZ, slider, buttons 1 - 9
-        self.sendValues = ["0","0","0","0","0","0","0","0","0","0","0","0","0"] # List of values to send
-
+        # self.sendValues = ["0","0","0","0","0","0","0","0","0","0","0","0","0"] # List of values to send
+        self.sendValues = ["0","0","0"] # Testing with only joystick xyz
         # Setup & start a thread to read & write to the serial bus
         readProcess = Thread(target=self.__doSerial)
         readProcess.start()
@@ -71,7 +71,7 @@ class sensorHelper:
             except UnicodeDecodeError: # Catches errors when decoding data at an invalid start position
                 self.recieveValues = "x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x\n"
                 print("error reading serial")
-                # self.s.flushInput() # Flushes serial bus (might not be necessary)
+                self.s.flushInput() # Flushes serial bus (might not be necessary)
             # Sends data back to the Arduino
             sendData = ""
             for i in range(0, len(self.sendValues)):

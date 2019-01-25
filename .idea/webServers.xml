@@ -10,8 +10,8 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
-      <webServer id="2b4f71c3-957d-40d5-aece-972f03fbb089" name="rovRPi" url="http://192.168.137.12">
-        <fileTransfer host="192.168.137.12" port="22" rootFolder="/home/pi" accessType="SFTP">
+      <webServer id="2b4f71c3-957d-40d5-aece-972f03fbb089" name="rovRPi" url="http://192.168.137.148">
+        <fileTransfer host="192.168.137.148" port="22" rootFolder="/home/pi" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
           </advancedOptions>
