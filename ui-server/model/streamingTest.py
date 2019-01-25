@@ -1,33 +1,41 @@
-#1/usr/bin/env python
+# !/usr/bin/env python3
 import itertools
 import time
 import random
 import importlib
-#importlib.import_module(rover.py)
-from rover import roverState
+from rover import rover
 from flask import Flask, Response, redirect, request, url_for
 
 app = Flask(__name__)
 
-rover1 = roverState()
+nPike = rover()
 
-def Gyroscope():
-	returnString = "Data 1: %d %d %d" % (random.randint(1,21)*5, random.randint(1,21)*5, random.randint(1,21)*5)
-	return returnString
 
-def roverLocation():
-	returnString = "%s, %s" % (rover1.getRoverGyro(), rover1.getRoverCompass())
-	return returnString
+def nPikeStringData():
+    returnString = "%s, %s, %s" % (nPike.getRoverVoltage(), nPike.getRoverCurrent(), nPike.getRoverMagnometer())
+    return returnString
+
 
 @app.route('/')
 def index():
-	if request.headers.get('accept') == 'text/event-stream':
-		def events():
-			for i, c in enumerate(itertools.cycle('\|/-')):
-				yield "data: %s %s\n\n" % (c, roverLocation())
-				time.sleep(.1)  # an artificial delay
-		return Response(events(), content_type='text/event-stream')
-	return redirect(url_for('static', filename='index.html'))
+    if request.headers.get('accept') == 'text/event-stream':
+        def events():
+            for i, c in enumerate(itertools.cycle('\|/-')):
+                yield "data: %s %s\n\n" % (c, nPikeStringData())
+                time.sleep(.1)  # an artificial delay
+
+        return Response(events(), content_type='text/event-stream')
+    return redirect(url_for('static', filename='index.html'))
+
 
 if __name__ == "__main__":
+    x=0
+    while True:
+        nPike.sendJoystick([x,2,1])
+        print(x)
+        time.sleep(1)
+        if x == 9: x = 0
+        else: x+=1
     app.run(host='0.0.0.0', port=80)
+
+

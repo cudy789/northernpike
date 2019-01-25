@@ -1,27 +1,87 @@
-import csv
-class roverState:
+import threading
+import time
+from sensorHelper import sensorHelper # Might give linter error, but runs fine
+#   -----Description-----
+# This class contains all the getter
+# methods to observe the current state
+# of the rover. It also contains the setter
+# methods to pass navigation information to
+# the Arduino.
+#   ---------------------
+BATTERY_ADDRESS = 1
+BAROMETER_ADDRESS = 3 # batteryAddress needs 2 addresses
+LEAK_ADDRESS = 4
+HYGROMETER_ADDRESS = 5
+BOARD_ADDRESS = 6 # magnometer, accelerometer, gyroscope, thermometer
 
-	def __init__(self):
-		self.writer = csv.writer(testfile1.csv, dialect='excel')
+class rover:
 
-	def getRoverGyro(self):
-		return "Gyro values x: %d y: %d z: %d" % (self.x, self.y, self.z)
+    def __init__(self):
+        self.mySensorHelper = sensorHelper()
+
+    ##### GETTERS #####
+
+    def sensorsOnline(self):
+        return self.mySensorHelper.sensorsOnline()
+
+    def getRoverVoltage(self):
+        return self.mySensorHelper.getSS()[BATTERY_ADDRESS-1]
+
+    def getRoverCurrent(self):
+        return self.mySensorHelper.getSS()[BATTERY_ADDRESS-1+1]
+
+    def getRoverBarometer(self): # barometer
+        return self.mySensorHelper.getSS()[BAROMETER_ADDRESS-1]
+
+    def getRoverLeak(self):
+        return bool(self.mySensorHelper.getSS()[LEAK_ADDRESS-1])
+
+    def getRoverHygrometer(self): # humidity
+        return self.mySensorHelper.getSS()[HYGROMETER_ADDRESS-1]
 
 
-	def getRoverCompass(self):
-		return "Direction: %d" % (self.d)
+    def getRoverThermometer(self): # temp
+        return self.mySensorHelper.getSS()[BOARD_ADDRESS-1]
 
-	def readGyroData(self):
-		return None
+    def getRoverGravity(self): # 3 values, x y z
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS-1+1],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+2],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+3]]
 
+    def getRoverMagnometer(self): #compass, 3 values, x y z
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS-1+4],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+5],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+6]]
 
-	def writedata(self):
-		self.writer.writerows(x,y,z,d)
+    def getRoverAccelerometer(self): # acceleration x y z
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 7],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 8],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 9]]
 
-	x=10
-	y=15
-	z=20
-	d=45
+    def getRoverVelocity(self): # velocity x y z
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 10],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 11],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS - 1 + 12]]
 
+    def getRoverGyro(self): # 3 values, x y z
+        return [self.mySensorHelper.getSS()[BOARD_ADDRESS-1+13],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+14],
+                self.mySensorHelper.getSS()[BOARD_ADDRESS-1+15]]
 
+    def getRoverDewpoint(self):
+        return self.getRoverThermometer() - ((100 - self.getRoverHygrometer()/5)) # Approximation in Celsius
+
+    ###################
+
+    ##### SETTERS #####
+
+    def sendJoystick(self, jValues): # 3 values, x y z
+        self.mySensorHelper.setNav(jValues, 0)
+
+    def sendSlider(self, sValue): # 1 value
+        self.mySensorHelper.setNav(sValue, 3)
+
+    def sendButtons(self, buttons): # 9 values
+        self.mySensorHelper.setNav(buttons,4)
+    ###################
 
